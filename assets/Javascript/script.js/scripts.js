@@ -1,135 +1,131 @@
-// javaScript Trivia Game//
-var trivia = {
-  initialScreen: "",
-  correctCounter: 0,
-  inCorrectCounter: 0,
-  unAnsweredCounter: 0,
-  clickSound: new Audio("http://www.moviewavs.com/0053148414/MP3S/Movies/Star_Wars/imperial.mp3"),
-  gameHTML: "",
-  questionsArray: [
-                  "Who is Luke Skywalker's father?","Which is the only film of the original six in which Tatooine doesn't appear?", "Who kills Jabba The Hut?", "Which film has the most deaths?", "What was Luke Skywalker's original surname?", "Where does Yoda live?"],
-  answerArray: [
-                ["Obi Wan Kenobi", "Emperor Palpatine", "Uncle Owen", "Anakin Skywalker"], ["The Phantom Menace", "The Force Awakens", "Return of the Jedi", "The Empire Strikes Back"], ["Princess Leia", "Han Solo", "Darth Vader", "Luke Skywalker"], ["The Force Awakens", "Attack of the Clones", "A New Hope", "Revenge of the Sith"], ["Stardancer", "Starwalker", "Starkiller", "Stargazer"],["Alderaan", "Dagobah", "Tatooine", "Naboo"],],
-  correctAnswers: [
-                  "D. Anakin Skywalker", "D. The Empire Strikes Back", "A. Princess Leia", "C. A New Hope", "C. Starkiller", "B. Dagobah"],
-  imageArray: [
-              "<img class='center-block img-right' src='assets/images/dv.png'>", "<img class='center-block img-right' src='assets/images/Tusken Riders.png'>", "<img class='center-block img-right' src='assets/images/leiauutf.png'>", "<img class='center-block img-right' src='assets/images/LS_01.png'>", "<img class='center-block img-right' src='assets/images/ls_jedi.png'>", "<img class='center-block img-right' src='assets/images/Yoda.png'>"],
-  clock: "",
-  questionCounter: 0,
-  timeCounter: 10,
+// javaScript Train scheduler//
+
+var database = firebase.database();
+
+// Initial Values
+var trainName = "";
+var destination = "";
+var firstTrainTime = "";
+var frequency = 0;
+var currentTime = moment();
+var index = 0;
+var trainIDs = [];
+
+// Show current time
+var datetime = null,
+date = null;
+
+var update = function () {
+  date = moment(new Date());
+  datetime.html(date.format('dddd, MMMM Do YYYY, h:mm:ss a'));
 };
 
-
-//FUNCTIONS
-//===========================================
-function startScreen(){
-  //Create the start button
-  trivia.initialScreen = "<p class='text-center main-button'><a class='btn btn-primary btn-lg start-button text-center' href='#'>START!</a></p>";
-  //Add Start button to main-area
-  $(".main-area").html(trivia.initialScreen);
-};
-
-function timer(){
-  trivia.clock = setInterval(twentySeconds, 1000);
-  function twentySeconds(){
-    if(trivia.timeCounter === 0){
-      timeOutLoss();
-      clearInterval(trivia.clock);
-
-    }
-    if(trivia.timeCounter > 0) {
-      trivia.timeCounter --;
-    }
-    $(".timer").html(trivia.timeCounter);
-  }
-};
-//number of questions
-function wait(){
-  if(trivia.questionCounter < 5) {
-    trivia.questionCounter ++;
-    generateHTML();
-    trivia.timeCounter = 10;
-    timer();
-  }
-  else {
-    finalScreen();
-  }
-};
-
-function win(){
-  trivia.correctCounter ++;
-  trivia.gameHTML = "<p class='text-center'> Time Remaining: <span class='timer'>" + trivia.timeCounter + "</span></p>" + "<p class='text-center'>Correct! The answer is: " + trivia.correctAnswers[trivia.questionCounter] + "</p>" + trivia.imageArray[trivia.questionCounter];
-  $(".main-area").html(trivia.gameHTML);
-  setTimeout(wait, 4000);
-};
-
-function loss(){
-  trivia.inCorrectCounter ++;
-  trivia.gameHTML = "<p class='text-center timer-p'>Time Remaining: <span class='timer'>" + trivia.timeCounter + "</span></p>" + "<p class='text-center'>Wrong! The correct answer is: "+ trivia.correctAnswers[trivia.questionCounter] + "</p>" + trivia.imageArray[trivia.questionCounter];
-	$(".main-area").html(trivia.gameHTML);
-	setTimeout(wait, 4000);
-};
-
-function timeOutLoss(){
-  trivia.unAnsweredCounter ++;
-  trivia.gameHTML = "<p class='text-center timer-p'>Time Remaining: <span class='timer'>" + trivia.timeCounter + "</span></p>" + "<p class='text-center'>You ran out of time!  The correct answer was: " + trivia.correctAnswers[trivia.questionCounter] + "</p>" + trivia.imageArray[trivia.questionCounter];
-	$(".main-area").html(trivia.gameHTML);
-	setTimeout(wait, 4000);
-};
-
-function finalScreen(){
-  trivia.gameHTML = "<p class='text-center timer-p'>Time Remaining: <span class='timer'>" + trivia.timeCounter + "</span></p>" + "<p class='text-center'>All done, here's how you did!" + "</p>" + "<p class='summary-correct'>Correct Answers: " + trivia.correctCounter + "</p>" + "<p>Wrong Answers: " + trivia.inCorrectCounter + "</p>" + "<p>Unanswered: " + trivia.unAnsweredCounter + "</p>" + "<p class='text-center reset-button-container'><a class='btn btn-primary btn-lg btn-block reset-button' href='#' role='button'>Reset The Quiz!</a></p>";
-  $(".main-area").html(trivia.gameHTML);
-};
-
-function resetGame(){
-  trivia.questionCounter = 0;
-  trivia.correctCounter = 0;
-  trivia.inCorrectCounter = 0;
-  trivia.unAnsweredCounter = 0;
-  trivia.timeCounter = 20;
-  generateHTML();
-  timer();
-};
-
-function generateHTML(){
-  trivia.gameHTML = "<p class='text-center timer-p'>Time Remaining: <span class='timer'>20</span></p><p class='text-center'>" + trivia.questionsArray[trivia.questionCounter] + "</p><button class='first-answer answer'>A. " + trivia.answerArray[trivia.questionCounter][0] + "</button><br><button class='answer'>B. "+trivia.answerArray[trivia.questionCounter][1]+"</button><br><button class='answer'>C. "+trivia.answerArray[trivia.questionCounter][2]+"</button><br><button class='answer'>D. "+trivia.answerArray[trivia.questionCounter][3]+"</button>";
-  $(".main-area").html(trivia.gameHTML);
-}
+$(document).ready(function(){
+  datetime = $('#current-status');
+  update();
+  setInterval(update, 1000);
+});
 
 
-//MAIN PROCESS
-//===========================================
-startScreen();
+// Capture Button Click
+$("#add-train").on("click", function() {
 
-//start-button click
-$("body").on("click", ".start-button", function(event){
-	event.preventDefault();
-	trivia.clickSound.play();
-	generateHTML();
+  // values from text boxes
+  trainName = $("#train-name").val().trim();
+  destination = $("#destination").val().trim();
+  firstTrainTime = $("#train-time").val().trim();
+  frequency = $("#frequency").val().trim();
 
-	timer();
-}); // Closes start-button click
+  // First Time (pushed back 1 year to make sure it comes before current time)
+  var firstTimeConverted = moment(firstTrainTime, "hh:mm").subtract(1, "years");
+  //console.log("FTC: "+firstTimeConverted);
 
-$("body").on("click", ".answer", function(event){
-	trivia.clickSound.play();
-  //If correct answer
-  selectedAnswer = $(this).text();
-	if(selectedAnswer === trivia.correctAnswers[trivia.questionCounter]) {
+  // Difference between the times
+  var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+  //console.log("Difference in time: " + diffTime);
 
-		clearInterval(trivia.clock);
-		win();
-	}
-  //If incorrect ansewr
-	else {
+  // Time apart (remainder)
+  var tRemainder = diffTime % frequency;
+  //console.log(tRemainder);
 
-		clearInterval(trivia.clock);
-		loss();
-	}
-}); // Close .answer click
+  // Minute Until Train
+  var minutesAway = frequency - tRemainder;
+  //console.log("Minutes away: " + minutesAway);
 
-//reset-button click
-$("body").on("click", ".reset-button", function(event){
-	trivia.clickSound.play();
-	resetGame();
-}); // Closes reset-button click
+  // Next Train
+  var nextTrain = moment().add(minutesAway, "minutes");
+  //console.log("Arrival time: " + moment(nextTrain).format("hh:mm"));
+
+  // Arrival time
+  var nextArrival = moment(nextTrain).format("hh:mm a");
+
+  var nextArrivalUpdate = function() {
+    date = moment(new Date());
+    datetime.html(date.format('hh:mm a'));
+  };
+
+  // Code for handling the push
+  database.ref().push({
+    trainName: trainName,
+    destination: destination,
+    firstTrainTime: firstTrainTime,
+    frequency: frequency,
+    minutesAway: minutesAway,
+    nextArrival: nextArrival,
+    dateAdded: firebase.database.ServerValue.TIMESTAMP
+  });
+
+  alert("Form submitted!");
+
+  // Empty text input
+  $("#train-name").val("");
+  $("#destination").val("");
+  $("#train-time").val("");
+  $("#frequency").val("");
+
+  // Don't refresh the page!
+  return false;
+});
+
+
+// Firebase watcher + initial loader HINT: This code behaves similarly to .on("child_added")
+// This will only show the 15 latest entries
+  database.ref().orderByChild("dateAdded").limitToLast(15).on("child_added", function(snapshot) {
+
+
+    console.log("Train name: " + snapshot.val().trainName);
+    console.log("Destination: " + snapshot.val().destination);
+    console.log("First train: " + snapshot.val().firstTrainTime);
+    console.log("Frequency: " + snapshot.val().frequency);
+    console.log("Next train: " + snapshot.val().nextArrival);
+    console.log("Minutes away: " + snapshot.val().minutesAway);
+    console.log("==============================");
+
+
+  // Change the HTML to reflect
+  $("#new-train").append("<tr><td>" + snapshot.val().trainName + "</td>" +
+    "<td>" + snapshot.val().destination + "</td>" +
+    "<td>" + "Every " + snapshot.val().frequency + " mins" + "</td>" +
+    "<td>" + snapshot.val().nextArrival + "</td>" +
+    "<td>" + snapshot.val().minutesAway + " mins until arrival" + "</td>" +
+    "</td></tr>");
+
+  index++;
+
+  // Handle the errors
+  }, function(errorObject) {
+    console.log("Errors handled: " + errorObject.code);
+  });
+
+  //Gets the train IDs in an Array
+  database.ref().once('value', function(dataSnapshot){
+    var trainIndex = 0;
+
+      dataSnapshot.forEach(
+          function(childSnapshot) {
+              trainIDs[trainIndex++] = childSnapshot.key();
+          }
+      );
+  });
+
+  console.log(trainIDs);

@@ -1,79 +1,22 @@
-/* Trivia Game CSS */
-body {
-    background-image: url("https://media.giphy.com/media/5wikad3qSOqAg/giphy.gif");
-    background-repeat: no-repeat;
-    background-attachment:scroll;
-    background-size: cover;
-    color: #777;
+/* Train Schedule CSS */
+.jumbotron{
+	background-image: url(" https://tse2.mm.bing.net/th?id=OIP.znjrVWowZE76YstTa_D9PgEsC7&pid=15.1&P=0&w=265&h=166");
+  background-repeat: no-repeat;
+  background-attachment:scroll;
+  background-size: cover;
+
 }
 
-.jumbotron {
-  box-sizing: border-box;
-  height: 600px;
-  background-color: rgba(0, 0, 0, 0);
+.jumbotron h1 {
+	color: white;
+
 }
 
-.main-button-container {
-  margin-top: 175px;
-  max-width: 610px;
-  margin-left: auto;
-  margin-right: auto;
+.fa-
+train{
+	color: saddlebrown;
 }
 
-.timer-p {
-  margin-top: 40px;
-}
-
-.answer:hover {
-  background: #777;
-}
-
-.answer {
-  padding-top: 7px;
-  height: 45px;
-  width: 100%;
-  color: black;
-  padding-left: 14px;
-  background-color: white;
-  border-radius: 4px;
-  text-align: left;
-  margin-bottom: 5px;
-}
-
-.answer:focus{
-  background-color: none;
-}
-
-.img-right {
-  margin-top: 40px;
-  height: 25em;
-  width: 25em;
-}
-
-.first-answer {
-  margin-top: 40px;
-}
-
-.start-button {
-  padding: .25em 7em .25em 7em;
-  background-color: #9B0B00;
-  border: none;
-}
-
-.start-button:hover {
-  background-color: #FF1200;
-}
-
-.reset-button {
-  padding: .25em 7em .25em 7em;
-  background-color: #9B0B00;
-  border: none;
-}
-
-.reset-button:hover {
-  background-color: #FF1200;
-}
-
-.summary-correct {
-  margin-top: 40px;
+h5 {
+	color: red;
 }
